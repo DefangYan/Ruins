@@ -1,0 +1,31 @@
+@startuml
+start
+: queryPaymentResult Job (每30s执行一次);
+->
+: 查询t_payment_bank_order_dtl state 为1的 orderDtlList;
+->
+: 查询t_payment_bank_order中state为3的数据,并加入到bankPaymentOrderDtlList中;
+->
+: paymenQuery();
+->
+: 获取银行类型根据PayerAcctNo;
+->
+if(获取的银行类型和BYTTE相等)then(Y)
+->
+: 创建支付查询参数;
+->
+: 更新PaymentBankOrderDtl状态(t_payment_bank_order_dtl,t_payment_bank_order);
+else(N)
+->
+: 根据PaymentBankOrderDtl 付款账户查询对应的银行(t_payment_bank_account_info);
+->
+    if(banktype)then(BOCC)
+    ->
+    :queryTransfrom();
+    else(CITIC)
+    ->
+    :queryPaymentAgent();
+    endif
+endif
+stop
+@enduml

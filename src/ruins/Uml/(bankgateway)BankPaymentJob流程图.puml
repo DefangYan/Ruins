@@ -1,0 +1,33 @@
+@startuml
+start
+: BankPaymentJob 9-23点每分钟执行一次;
+->
+: 查询 t_payment_bank_order_dtl表;
+->
+: 根据accountNo 从表t_payment_bank_account_info查找出账户信息,如果accountNo不属于已接入的账户体系,返回null;
+->
+:set paymentBankOrderDtl对象;
+->
+:根据accountNo,State,AccountState查询表t_payment_bank_account_info对应的银行类型;
+->
+if(banktype)then(CITIC)
+    ->
+    if(startsWithbankFlag)then(Y)
+    ->
+    :transferAccount();
+    else
+    ->
+    :bankPayment();
+    endif
+else(BOCC)
+->
+    if(paymentBankOrderDtl是否对公或者异行)then(Y)
+    ->
+    :transformByRouter();
+    else(N)
+    ->
+    :paymentAgent();
+    endif
+endif
+stop
+@enduml

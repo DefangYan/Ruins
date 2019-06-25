@@ -1,0 +1,37 @@
+@startuml
+start
+:QueryPaymentResultJob(银企直连查询交易结果job每30s执行一次);
+:查询表t_payment_bank_order_dtl(条件为State值为1)返回PaymentBankOrderDtl对象集合;
+:查询表t_payment_bank_order中state为3的数据,并加入到bankPaymentOrderDtlList中;
+:遍历bankPaymentOrderDtlList;
+:根据bankPaymentOrderDtlList遍历的对象查出bankType key;
+    if(BYTTE equals key)then(Y)
+    :根据bankPaymentOrderDtl获取支付查询参数对象;
+    :创建 支付输出对象;
+    :根据bankPaymentOrderDtl获取PaymentBankOrder对象;
+        if(支付输出对象的交易返回码与支付返回的结果相同'0000')then(Y)
+            if(支付输出对象支付状态与网关返回支付状态0相同)then(Y)
+            :设置bankPaymentOrder的state为2成功;
+            else if(支付输出对象支付状态与网关返回支付失败2相同)then(Y)
+            :设置BankPaymentOrder的state为3失败;
+            :设置exceptionReasonvalue为6;
+            :更新表t_payment_bank_order_dtl,t_payment_bank_order;
+            endif
+            else if(支付输出对象的交易返回码与支付返回的结果相同'0005')then(Y)
+            :设置BankPaymentOrder的state为3失败;
+            :设置exceptionReasonvalue为6;
+            :更新表t_payment_bank_order_dtl,t_payment_bank_order;
+        endif
+    else(N)
+    :根据付款账户查询对应银行;
+    :获取bankType,根据bankType获取key;
+        if(key为BOCC)then(Y)
+            if(paymentBankOrderDtl.getIsEnterprise() || paymentBankOrderDtl.getDifBankFlag()为true)then(Y)
+            :queryTransform(paymentBankOrderDtl)走转账;
+            else(N)
+            :queryPaymentAgent(paymentBankOrderDtl)走代付;
+            endif
+        endif
+    endif
+stop
+@enduml

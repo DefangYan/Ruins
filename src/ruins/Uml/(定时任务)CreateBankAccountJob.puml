@@ -1,0 +1,9 @@
+@startuml
+
+start
+:CreateBankAccountJob(银企直连开户Job 每3分钟执行一次);
+:查询t_payment_bank_account_info返回BankAccountInfo对象集合;
+:遍历bankAccountInfoList 并且调用中信开户服务(交行的没有写);
+stop
+
+@enduml

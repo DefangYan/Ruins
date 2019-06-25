@@ -1,0 +1,14 @@
+@startuml
+start
+:PaymentNoticeJob(定时通知数据组支付Job 每5分钟执行一次);
+:查询t_payment_bank_log返回PaymentBankOrder对象集合bankPaymentOrderList;
+if(bankPaymentOrderList.isEmpty())then(Y)
+:return;
+endif
+:遍历bankPaymentOrderList;
+:填充PaymentEvent 对象;
+:创建DataCubeRequest对象;
+:执行postInternally请求;
+:更新表t_payment_bank_log;
+end
+@enduml

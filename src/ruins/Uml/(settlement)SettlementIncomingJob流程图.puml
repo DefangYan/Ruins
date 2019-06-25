@@ -1,0 +1,9 @@
+@startuml
+start
+:SettlementIncomingJob(每30s执行一次);
+->
+:processFail() 处理上次失败的银行流水 更新t_settlement_incoming_job;
+->
+:processNew() 处理新进银行流水 更新t_settlement_incoming_job;
+stop
+@endumlhai

@@ -1,0 +1,72 @@
+@startuml
+
+
+融资交易模块 -> 结算子系统 :账户支付结算指令
+
+结算子系统 -> 账户子系统 :"转出户"转到"中间户"
+database 结算数据库
+结算子系统 -> 结算数据库 :保存结算订单
+结算子系统 -> 支付子系统 :发起转出转入银行户支付，创建支付订单
+
+database 支付数据库
+
+支付子系统 -> 支付数据库 :保存支付订单
+银企网关 -> 支付数据库 : 获取支付订单
+note over 银企网关
+          9-23点 每分钟
+end note
+银企网关 -> 商业银行 :向银行发支付报文
+
+note over 银企网关
+          每30秒
+end note
+银企网关 -> 支付数据库 : 更新支付状态
+银企网关 -> 商业银行 :向银行发支付报文
+note over 银企网关
+          每30秒
+end note
+银企网关 -> 支付数据库 : 保存出账和入账流水
+银企网关 -> 商业银行 :向银行获取出账和入账流水
+note over 支付子系统
+          每60秒
+end note
+支付子系统 -> 支付数据库 :获取支付订单
+支付子系统 -> 结算子系统 :回调
+activate 结算子系统
+结算子系统 -> 结算数据库 :更新结算状态为待记账
+deactivate
+
+note over 结算子系统
+          每30秒
+end note
+结算子系统 -> 支付子系统 :查询出账入账流水
+支付子系统 -> 支付数据库 :查询出账和入账流水
+结算子系统 -> 结算数据库 :更新入账流水对应的结算订单状态为"待记账"
+note over 结算子系统
+          每30秒
+end note
+结算子系统 -> 结算数据库 :查询待记账结算订单
+结算子系统 -> 账户子系统 :异步记账("中间户"到"转出户")
+结算子系统 -> 结算数据库 :更新结算状态为"成功"
+note over 结算子系统
+          每30秒
+end note
+结算子系统 -> 结算数据库 :查询成功的结算订单
+融资交易模块 <- 结算子系统 :支付回调
+
+@enduml
+
+save:s
+
+涉及表 除bankgateway
+settlementOrder                   s
+settlementOrderTrack              s
+t_account_auth_white_list         s
+t_account_auth_white_list_oprt_log  s
+settlementAccountDetail             s
+t_payment_bank_order                s
+t_payment_bank_log                  s
+t_payment_bank_order_report         s
+t_settlement_payment_detail         s
+t_posting_detail                    s
+t_psoting_transcation               s

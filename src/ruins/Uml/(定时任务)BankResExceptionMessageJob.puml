@@ -1,0 +1,17 @@
+@startuml
+
+start
+:BankResExceptionMessageJob(银行流水异常数据通知Job 每30分钟执行一次);
+:调用BankResExceptionService中的queryBankExceptionMsg方法;
+:新建并设置BankResExceptionMessage对象;
+:查询表t_bank_res_exception_message 返回BankResExceptionMessage对象list;
+if(返回的list不为null并且size大于0)then(Y)
+    if(当前环境为产线环境)then(Y)
+    :发送银行流水异常数据邮件给jianwei.zhong@iqunxing.com;
+    endif
+    :遍历list;
+    :设置BankResExceptionMessage对象emailflag值并更新表t_bank_res_exception_message;
+endif
+end
+
+@enduml

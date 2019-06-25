@@ -1,0 +1,20 @@
+@startuml
+start
+:ImportBankCnapsJob(联行号导入job每天凌晨2点执行一次);
+->
+    if(file存在)then(Y)
+    ->
+    :删除t_payment_cnaps_temp表数据;
+    ->
+    :loadCnapsFile()快速导入数据至t_payment_cnaps_temp表;
+    :updateTempBankType()更新表t_payment_cnaps_temp ,t_payment_bank_code;
+    :updateTempProvinceAndCity()更新表t_payment_cnaps_temp ,t_payment_bank_city_code;
+    :updateCnaps()更新表t_payment_bank_cnaps ,t_payment_cnaps_temp;
+    :updateBranchName()更新表t_payment_bank_cnaps ,t_payment_cnaps_temp;
+    :insertFromTemp()在表t_payment_bank_cnaps 插入数据;
+    :文件重新命名;
+    else(N)
+    :return;
+    endif
+end
+@enduml

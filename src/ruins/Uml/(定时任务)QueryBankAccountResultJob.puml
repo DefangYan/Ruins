@@ -1,0 +1,8 @@
+@startuml
+start
+
+:QueryBankAccountResultJob(查询开户结果Job 每五分钟执行一次);
+:查询t_payment_bank_account_info信息;
+:遍历bankAccountInfoList 每隔2s 调用中信查询开户结果服务;
+end
+@enduml

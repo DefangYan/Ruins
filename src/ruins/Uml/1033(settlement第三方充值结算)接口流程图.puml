@@ -1,0 +1,41 @@
+@startuml
+start
+:第三方充值结算SettlementRequest;
+->
+if(参数检查)then(checkParams返回true)
+    ->
+    :填充实体类TSettlementOrder,TSettlementOrderTrack(insert t_settlement_order,t_settlement_order_track);
+    ->
+    if(收款方是群星虚拟户)then(Y)
+    ->
+    :直接记账;
+    ->
+    :填充实体类TSettlementAccountDetail;
+    ->
+    :填充记账请求实体类PostingResponse;
+    ->
+    :记账 IPostingService.post()(account服务中);
+    ->
+    :更新状态(t_settlement_order,t_settlement_order_detail,t_settlement_order_track);
+    else(N)
+    ->
+    :走备付;
+    ->
+    :查询备付金账户(根据Payment接口  参数为accountNo 查询出账户信息,获取银行类型);
+    ->
+    :填充TSettlementPaymentDetail;
+    ->
+    :备付/创建支付订单(更新支付详情Id,t_settlement_order,支付接口 创建银企支付订单);
+    ->
+    :更新状态;
+    endif
+    ->
+    :组装SettlementResponse;
+else(checkParams返回false)
+endif
+->
+:返回SettlementResponse;
+stop
+
+
+@enduml

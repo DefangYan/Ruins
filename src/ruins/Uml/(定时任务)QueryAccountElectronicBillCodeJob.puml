@@ -1,0 +1,25 @@
+@startuml
+start
+:QueryAccountElectronicBillCodeJob(银企直连查询电子回单验证码job,每30分钟执行一次);
+:查询数据库中banktype为01,parentaccountno为null的数据(表t_payment_bank_account_info 条件为BankType中信户01,ParentAccountNo为null);
+:查询表t_payment_citic_account_dtl中账户为上一步查询出来的第一个数;
+:遍历bankAccountInfoList;
+if(bankAccountInfo的AccountNo为null或者长度为0)then(Y)
+:继续判断;
+:queryAccountElectronicBillCode(bankAccountInfo);
+    if(bankType为01(CITIC))then(Y)
+    :填充queryAccountElectronicBillCodeInput对象;
+    :(xmlToObject)queryAccountElectronicBillCodeOutput;
+    :遍历queryAccountElectronicBillCodeOutput.getList(queryAccountElectronicBillCodeUserData对象);
+    :查询t_payment_citic_account_dtl表获得CiticAccountDetail对象(条件交易序列号,凭证号,主账号);
+        if(CiticAccountDetail不为null)then(Y)
+        :设置Reserve2并更新表t_payment_citic_account_dtl;
+        else(N)
+        :打印日志;
+        endif
+    elseif(banktype为02(BOCC))then(Y)
+    stop
+    endif
+endif
+end
+@enduml

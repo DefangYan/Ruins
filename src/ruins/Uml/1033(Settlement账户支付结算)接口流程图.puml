@@ -1,0 +1,140 @@
+@startuml
+start
+:账户支付结算指令createSettlementOrder;
+->
+if (request中参数检查) then(参数检查返回true)
+  ->
+  if(操作者对出款户是否有借记权限)then(Y);
+  ->
+  :查询1034(iqunxingaccount);
+  ->
+  :获取账户白名单(t_account_auth_white_list表)
+    ->
+    if(循环判断customerId是否存在)then(Y);
+    ->
+    :落库 t_account_auth_white_list_oprt_log;
+    else(N)
+    ->
+    :更新response状态;
+    endif
+  endif
+
+  ->
+  if(付款方是否为通用结算户)then(Y);
+  ->
+    if(voidStl)then(Y);
+    ->
+    :收款方是否不为群星户;
+    ->
+    :账户接口查询出款户出金白名单;
+    ->
+        if(是否存在&& size>1)then(Y);
+         ->
+        :更新response状态返回response;
+        stop
+        else()
+        ->
+        :若标示;
+        ->
+        :更新response,返回response;
+        stop
+        endif
+    endif
+  endif
+  if(voidStlbothqxAccount)then(Y);
+  ->
+  :填充实体类TSettlementOrder;
+  else(N)
+  ->
+  :落库insert t_settlement_order ,t_settlement_order_track;
+    ->
+    if(voidStl)then(Y);
+    ->
+    :组装SettlementResponse;
+    else(N)
+    ->
+    :判断;
+    ->
+        if(bothqxAccount)then(Y);
+        ->
+        :填充实体类TSettlementAccountDetail;
+        else(N)
+        ->
+        :填充实体类TSettlementAccountDetail
+        ->
+        :查询中间户(1034 getAccountByCustIdAcctType());
+            ->
+            if(中间户存在)then(Y);
+            ->
+            :结算账户明细收款方设置成中间户信息;
+            else(N)
+            ->
+            :填充实体类更新response;
+            stop;
+            endif
+        endif
+        ->
+        :填充结算支付明细实体类,设置状态待支付;
+        ->
+        :记账(1034 IPostingService.post());
+        ->
+        if(记账是否成功)then(Y);
+        ->
+        :填充结算账户明细实体类,设置成功状态,记账id(t_settlement_account_detail);
+            ->
+            if(结算交易订单model为中止状态)then(Y);
+            ->
+            :填充STATUS_SUSPENDING;
+            ->
+            :组装SettlementResponse success-100;
+            elseif(bothqxAccount)then(Y);
+            ->
+            :填充实体STATUS_SUCCESS(t_settlement_order,t_settlement_order_track);
+            ->
+            :组装SettlementResponse success -100;
+            elseif(是否定时支付)then(Y);
+            ->
+            :填充实体STATUS_WAIT_TO_PAY(t_settlement_order,t_settlement_order_track);
+            ->
+            :组装SettlementResponse success -100;
+            else(N)
+            ->
+            :填充实体类STATUS_MIDDLE_ACCOUNT_POST_SUCCESS(t_settlement_payment_detail);
+            ->
+            :创建支付订单(会有更新支付详情Id操作,会创建银企支付订单);
+                ->
+                if(订单是否创建成功)then(Y);
+                ->
+                :更新状态STATUS_PAYING;
+                ->
+                :组装SettlementResponse;
+                else(N)
+                ->
+                :更新支付订单状态(t_settlement_account_detail);
+                ->
+                :冲正(记账操作,涉及表 t_posting_detail,t_posting_transaction);
+                ->
+                :组装SettlementResponse;
+                endif
+            endif
+        else(N)
+        ->
+        :填充实体类,更新response;
+        stop;
+        endif
+    endif
+    ->
+
+  endif
+
+else(参数检查返回false)
+  ->
+  :数据落库SettlementOrder,SettlementOrderTrack
+  返回response;
+endif
+->
+:返回response;
+stop
+
+
+@enduml

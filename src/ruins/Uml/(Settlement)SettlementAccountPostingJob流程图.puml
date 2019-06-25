@@ -1,0 +1,22 @@
+@startuml
+start
+:异步记账JOB;
+->
+:获取待记账结算账户明细(查询t_settlement_account_detail表);
+->
+: 根据账户明细遍历判断groupedAccountDetailMap中是否包含key(账户Id),put值返回map;
+->
+if(Map的key值迭代器hasnext())then(y)
+->
+: 查出acctDtlId,acctDtlList,settlementOrder;
+->
+: 根据doPosting方法查找出errorCode;
+->
+    if(errorCode == 0 )then(Y)
+    ->
+    : 更新 t_settlement_order,t_settlement_order_track;
+    endif
+endif
+end
+
+@enduml

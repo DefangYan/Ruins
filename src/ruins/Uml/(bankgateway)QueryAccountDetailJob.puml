@@ -1,0 +1,32 @@
+@startuml
+start
+: QueryAccountDetailJob(每30s执行一次);
+->
+: 查询中信银行主体账户信息(t_payment_bank_account_info);
+->
+if(bankaccountinfo.banktype 和 CITIC.code()相同)then(Y)
+->
+:CITICService   queryAccountDetail();
+else(N)
+->
+:BOCCBankAccountService  queryAccountDetail();
+->
+:组装查询输入报文;
+->
+:发送报文,解析报文;
+->
+    if(accountDetailList.size>0)then(Y)
+    ->
+    :判断账户合法性,查找订单流水,不是当天的订单流水入库t_bank_res_exception_message;
+    ->
+    :落库 t_payment_bocc_account_dtl;
+    else(N)
+    ->
+    :返回false;
+    stop
+    endif
+endif
+->
+:返回true;
+stop
+@enduml

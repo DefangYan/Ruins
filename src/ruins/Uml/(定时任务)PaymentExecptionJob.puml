@@ -1,0 +1,13 @@
+@startuml
+
+start
+:PaymentExecptionJob(支付异常通知Job 每30分钟执行一次);
+:查询表t_payment_bank_order(state为3)返回PaymentBankOrder对象集合list;
+if(list不为null且list长度大于0)then(Y)
+:新建StringBuffer对象sb,遍历list;
+:拼接 StringBuffer对象sb;
+:发送支付异常处理邮件;
+endif
+end
+
+@enduml

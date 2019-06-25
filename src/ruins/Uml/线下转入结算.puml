@@ -1,0 +1,27 @@
+@startuml
+
+start
+:线下转入结算createSettlementOrder;
+->
+if(request参数检查)then(checkparams为false)
+->
+:返回response;
+stop
+else(true)
+->
+:填充实体类 TSettlementOrder,TSettlementOrderTrack(t_settlement_order,t_settlement_order_track);
+->
+:填充记账请求实体类;
+->
+:记账 IPostingService.post();
+->
+:更新记账状态;
+->
+:设置SettlementResponse;
+endif
+->
+:返回response;
+stop
+@enduml
+BankPaymentJob(获取支付订单)
+

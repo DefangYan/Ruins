@@ -1,0 +1,10 @@
+@startuml
+start
+:结算状态通知JOB(30s执行一次);
+->
+:processNotifyFailedTxns(),t_settlement_order;
+->
+:processPendingNotifyTxns(),t_settlement_order;
+
+stop
+@enduml

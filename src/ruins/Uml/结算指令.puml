@@ -1,0 +1,33 @@
+@startuml
+start
+:结算指令SettlementReq;
+->
+if (request中参数检查) then(Y)
+  -[#blue]->
+  :根据结算类型获取相对的Service;
+  -[#blue]->
+  :service;
+  ->
+  if(service是否为空)then(Y)
+    -[#blue]->
+    :是否属于1018第一次计算记录;
+    -[#blue]->
+    :创建结算交易订单（根据结算类型）;
+    split
+    :线下转入结算<
+    split again
+    :第三方充值结算<
+    split again
+    :账户支付结算<
+    end split
+
+    else(N)
+    endif
+else(N)
+  ->
+  :返回response;
+endif
+-[#gray]->
+:返回response;
+stop
+@enduml

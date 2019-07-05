@@ -1,6 +1,6 @@
 package ruins.demo;
 
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * @author defang.yan
@@ -93,6 +93,19 @@ public class HelloWorld {
  //       System.out.println(Arrays.toString(HelloWorld.insertionSort(data)));
    //     System.out.println(Arrays.toString(HelloWorld.bubble(data)));
         System.out.println(Arrays.toString(HelloWorld.select(data)));
-     //   项目总结：此次项目涉及到的了很多的业务，很多隐含的业务都需要在别的服务一点点挖掘。只有把业务弄得透彻，上手写代码才能够流畅。
+        //   项目总结：此次项目涉及到的了很多的业务，很多隐含的业务都需要在别的服务一点点挖掘。只有把业务弄得透彻，上手写代码才能够流畅。 在编写接口的时候返回数据包装成前端需要的json格式。
+        //
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        HashSet<Object> objects = new HashSet<>();
+        objects.add(null);
+
+        Hashtable<Object, Object> objectObjectHashtable = new Hashtable<>();
+        objectObjectHashMap.put(null,"w");
+        objectObjectHashMap.put("",21);
+//        objectObjectHashtable.put(null,"q");
+        objectObjectHashtable.put("","we");
+        ArrayList<Object> objects1 = new ArrayList<>();
+        objects1.add(0,90);
+
     }
 }

@@ -101,9 +101,10 @@ public class HelloWorld {
 
         Hashtable<Object, Object> objectObjectHashtable = new Hashtable<>();
         objectObjectHashMap.put(null,"w");
+        objectObjectHashMap.put(null,"bbbbcccc");
         objectObjectHashMap.put("",21);
 //        objectObjectHashtable.put(null,"q");
-        objectObjectHashtable.put("","weareold");
+        objectObjectHashtable.put("","weareyoung");
         ArrayList<Object> objects1 = new ArrayList<>();
         objects1.add(0,90);
 

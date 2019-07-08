@@ -103,7 +103,7 @@ public class HelloWorld {
         objectObjectHashMap.put(null,"w");
         objectObjectHashMap.put("",21);
 //        objectObjectHashtable.put(null,"q");
-        objectObjectHashtable.put("","we");
+        objectObjectHashtable.put("","weareyoung");
         ArrayList<Object> objects1 = new ArrayList<>();
         objects1.add(0,90);
 

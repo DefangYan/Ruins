@@ -75,21 +75,21 @@ public class HelloWorld {
 //        int i = 40;
 //        int i0 = 40;
 //
-//        String s1 = "Hello";
-//        String s2 = "Hello";
-//        String s3 = "Hel" + "lo";
-//        String s4 = "Hel" + new String("lo");
-//        String s5 = new String("Hello");
-//        String s7 = "H";
-//        String s8 = "ello";
-//        String s9 = s7 + s8;
-//        String s10 = s7 + "ello";
+        String s1 = "Hello";
+        String s2 = "Hello";
+        String s3 = "Hel" + "lo";
+        String s4 = "Hel" + new String("lo");
+        String s5 = new String("Hello");
+        String s7 = "H";
+        String s8 = "ello";
+        String s9 = s7 + s8;
+        String s10 = s7 + "ello";
 //
-//        System.out.println(s1 == s3);
-//        System.out.println(s1 == s4);
-//        System.out.println(s1 == s5);
-//        System.out.println(s1 == s9);
-//        System.out.println(s1 == s10);
+        System.out.println(s1 == s3);
+        System.out.println(s1 == s4);
+        System.out.println(s1 == s5);
+        System.out.println("11111"+(s1 == s9));
+        System.out.println(s1 == s10);
  //       System.out.println(Arrays.toString(HelloWorld.insertionSort(data)));
    //     System.out.println(Arrays.toString(HelloWorld.bubble(data)));
         System.out.println(Arrays.toString(HelloWorld.select(data)));
